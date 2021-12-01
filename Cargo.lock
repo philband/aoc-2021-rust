@@ -72,6 +72,7 @@ dependencies = [
  "aoc-runner-derive",
  "cargo-aoc",
  "countmap",
+ "itermore",
  "itertools",
  "regex",
 ]
@@ -650,6 +651,12 @@ checksum = "b2b3ea6ff95e175473f8ffe6a7eb7c00d054240321b84c57051175fe3c1e075e"
 dependencies = [
  "libc",
 ]
+
+[[package]]
+name = "itermore"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e23e44d96ab47103d69ec50622c94f2329c88af877029fb6f013573cfb94a8d5"
 
 [[package]]
 name = "itertools"
