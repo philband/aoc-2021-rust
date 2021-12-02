@@ -3,7 +3,7 @@ use itermore::IterMore;
 type Data = Vec<i32>;
 
 #[aoc_generator(day1)]
-pub fn day1_generator(input: &str) -> Data {
+pub fn generator(input: &str) -> Data {
     input.lines().map(|l| l.parse::<i32>().unwrap()).collect()
 }
 
