@@ -17,14 +17,14 @@ pub fn part1(inputs: &Data) -> i32 {
     let (depth, distance) = inputs
         .iter()
         .fold((0, 0), |mut acc, i| {
-            let (x, y) = match i.direction {
+            let change = match i.direction {
                 'u' => (0, -1 * i.distance),
                 'd' => (0, 1 * i.distance),
                 'f' => (1 * i.distance, 0),
                 _ => panic!("unknown op {}", i.direction)
             };
-            acc.0 += x;
-            acc.1 += y;
+            acc.0 += change.0;
+            acc.1 += change.1;
             acc
         });
     depth * distance
@@ -35,15 +35,15 @@ pub fn part2(inputs: &Data) -> i32 {
     let (depth, distance, _) = inputs
         .iter()
         .fold((0, 0, 0), |mut acc, i| {
-            let (x, y, z) = match i.direction {
+            let change = match i.direction {
                 'u' => (0, 0, -1 * i.distance),
                 'd' => (0, 0, 1 * i.distance),
                 'f' => (acc.2 * i.distance, 1 * i.distance, 0),
                 _ => panic!("unknown op {}", i.direction)
             };
-            acc.0 += x;
-            acc.1 += y;
-            acc.2 += z;
+            acc.0 += change.0;
+            acc.1 += change.1;
+            acc.2 += change.2;
             acc
         });
     depth * distance
