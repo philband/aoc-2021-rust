@@ -1,5 +1,3 @@
-use itertools::Itertools;
-
 #[aoc_generator(day3)]
 pub fn generator(input: &str) -> Vec<String> {
     input.lines().map(|l| l.to_string()).collect()

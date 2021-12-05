@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use nalgebra::Matrix5;
 
 pub type Board = Matrix5<(u32, bool)>;
