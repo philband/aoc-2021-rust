@@ -1,6 +1,3 @@
-use std::collections::HashMap;
-use itertools::Itertools;
-
 
 #[aoc_generator(day6)]
 pub fn generator(input: &str) -> Vec<u64> {
@@ -14,8 +11,8 @@ pub fn generator(input: &str) -> Vec<u64> {
 }
 
 pub fn run(inputs: &[u64], n: u32) -> u64 {
-    let mut lantern = inputs.clone().to_vec();
-    (0..n).into_iter().fold(lantern, |v, x| {
+    let lantern = inputs.clone().to_vec();
+    (0..n).into_iter().fold(lantern, |v, _| {
         (0..=8).into_iter().fold(vec![0u64; 9], |mut w, i| {
             let j = match i {
                 0 => {w[8] += v[i]; 6},
@@ -26,7 +23,6 @@ pub fn run(inputs: &[u64], n: u32) -> u64 {
         })
     }).iter().sum()
 }
-
 
 #[aoc(day6, part1)]
 pub fn part1(inputs: &[u64]) -> u64 {
