@@ -53,7 +53,7 @@ pub fn remove_point_recurse(p: Point, set: &mut HashSet<Point>) -> i32 {
 #[aoc(day9, part2)]
 pub fn part2(map: &HashMap<Point, i32>) -> i32 {
     // clean up initial map to remove 9s (boundary)
-    let mut points = map.iter().filter_map(|(&p, &v)| {if v != 9 { Some(p) } else { None }}).collect::<HashSet<Point>>();
+    let mut points = map.iter().filter_map(|(&p, &v)| (v != 9).then(||p)).collect::<HashSet<Point>>();
 
     let mut basins = vec![];
     // now remove points recursively and split into basins
