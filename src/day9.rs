@@ -28,20 +28,16 @@ pub fn generator(input: &str) -> HashMap<Point, i32>{
 
 #[aoc(day9, part1)]
 pub fn part1(map: &HashMap<Point, i32>) -> i32 {
-    let xdim = map.clone().into_iter().map(|((x, _y), _)| x).max().unwrap();
-    let ydim = map.clone().into_iter().map(|((_x, y), _)| y).max().unwrap();
-
     // iterate over all points
-    (0..=xdim).cartesian_product(0..=ydim)
+    map.iter()
         // filter for minima
-        .filter(|p| {
+        .filter_map(|(p, v)| {
             // all neighbors must be lower
             p.neighbors().iter()
                 .filter_map(|n| map.get(n))
                 .all(|x| x > map.get(p).unwrap())
+                .then(||v+1)
         })
-        // add 1
-        .map(|p| *map.get(&p).unwrap() + 1)
         .sum()
 }
 
@@ -55,14 +51,9 @@ pub fn remove_point_recurse(p: Point, set: &mut HashSet<Point>) -> i32 {
 }
 
 #[aoc(day9, part2)]
-pub fn part2(map: &HashMap<Point, i32>) -> i32 {    let xdim = map.clone().into_iter().map(|((x, _y), _)| x).max().unwrap();
-    let xdim = map.clone().into_iter().map(|((x, _y), _)| x).max().unwrap();
-    let ydim = map.clone().into_iter().map(|((_x, y), _)| y).max().unwrap();
-
+pub fn part2(map: &HashMap<Point, i32>) -> i32 {
     // clean up initial map to remove 9s (boundary)
-    let mut points = (0..=xdim).cartesian_product(0..=ydim)
-        .filter(|p| *map.get(p).unwrap() != 9)
-        .collect::<HashSet<Point>>();
+    let mut points = map.iter().filter_map(|(&p, &v)| {if v != 9 { Some(p) } else { None }}).collect::<HashSet<Point>>();
 
     let mut basins = vec![];
     // now remove points recursively and split into basins
