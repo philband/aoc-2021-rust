@@ -36,7 +36,6 @@ pub fn part2(inputs: &[(Vec<String>, Vec<String>)]) -> i32 {
             let n8 = panel_len.iter().filter(|(_, l)| l == &7).map(|(s, _)| s).next().unwrap().as_str();
             let n235 = panel_len.iter().filter(|(_, l)| l == &5).map(|(s, _)| s.as_str()).collect::<Vec<_>>();
             let n069 = panel_len.iter().filter(|(_, l)| l == &6).map(|(s, _)| s.as_str()).collect::<Vec<_>>();
-            let ca = n7.chars().filter(|x| ! n1.chars().all(|c| &c != x)).next().unwrap();
             let n6 = n069.iter().filter(|&&x| ! n1.chars().all(|y| x.chars().any(|xx| y == xx))).next().unwrap();
             let n09 = n069.iter().filter(|&&x| &x != n6).map(|s| *s).collect::<Vec<_>>();
             let cc = n8.chars().filter(|x| ! n6.chars().any(|c| &c == x)).next().unwrap();

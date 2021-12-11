@@ -1,17 +1,21 @@
 use std::collections::{HashSet, HashMap};
 use itertools::Itertools;
-use statistical::{mean, median};
 
 type Point = (i32, i32);
 
 trait Neighbors {
     fn neighbors(self) -> [Point; 4];
+    fn neighbors_diag(self) -> [Point; 8];
 }
 
 impl Neighbors for Point {
     fn neighbors(self) -> [Point; 4] {
         let (x,y) = self;
         [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
+    }
+    fn neighbors_diag(self) -> [Point; 8] {
+        let (x,y) = self;
+        [(x-1, y), (x+1, y), (x, y-1), (x, y+1), (x-1, y-1), (x-1, y+1), (x+1, y-1), (x+1, y+1)]
     }
 }
 
