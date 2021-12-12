@@ -19,10 +19,6 @@ impl Cave {
         self.connections.insert(name);
     }
 
-    fn is_big(&self) -> bool {
-        self.big
-    }
-
     fn is_small(&self) -> bool {
         ! self.big
     }
