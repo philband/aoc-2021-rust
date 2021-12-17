@@ -26,7 +26,7 @@ impl Packet {
     pub fn eval(&self) -> u64 {
         match self.t {
             0..=3 => {
-                let mut it = self.sub.iter().map(|p| p.eval());
+                let it = self.sub.iter().map(|p| p.eval());
                 match self.t {
                     0 => it.sum(),
                     1 => it.product(),
@@ -157,7 +157,6 @@ pub fn state_machine(inputs: &Data, mut pos: &mut usize, initial: State) -> Pack
             }
             State::Finished => {
             }
-            _ => unreachable!(),
         }
     }
     p

@@ -1,6 +1,5 @@
 
 type Data = (Vec<u8>, Vec<([u8;2], usize, usize)>, Vec<u64>);
-type Search = (char, char);
 
 
 #[aoc_generator(day14)]
@@ -64,13 +63,13 @@ pub fn step_n(base: Vec<u8>, num: Vec<u64>, rule: Vec<([u8;2], usize, usize)>, n
 
 #[aoc(day14, part1)]
 pub fn part1(inputs: &Data) -> u64 {
-    let (base, rule, mut num) = inputs.clone();
+    let (base, rule, num) = inputs.clone();
     step_n(base, num, rule, 10)
 }
 
 #[aoc(day14, part2)]
 pub fn part2(inputs: &Data) -> u64 {
-    let (base, rule, mut num) = inputs.clone();
+    let (base, rule, num) = inputs.clone();
     step_n(base, num, rule, 40)
 }
 
