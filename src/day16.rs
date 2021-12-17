@@ -27,11 +27,17 @@ impl Packet {
 
     pub fn eval(&self) -> u64 {
         match self.t {
-            0 => self.sub.iter().map(|p| p.eval()).sum(),
-            1 => self.sub.iter().map(|p| p.eval()).product(),
-            2 => self.sub.iter().map(|p| p.eval()).min().unwrap(),
-            3 => self.sub.iter().map(|p| p.eval()).max().unwrap(),
-            5 | 6 | 7 => {
+            0..=3 => {
+                let mut it = self.sub.iter().map(|p| p.eval());
+                match self.t {
+                    0 => it.sum(),
+                    1 => it.product(),
+                    2 => it.min().unwrap(),
+                    3 => it.max().unwrap(),
+                    _ => unreachable!()
+                }
+            }
+            5..=7 => {
                 let (a, b) = (&self.sub[0], &self.sub[1]);
                 match self.t {
                     5 if a.eval() > b.eval() => 1,
@@ -84,11 +90,9 @@ pub fn to_num(bin: &[char]) -> u64 {
 }
 
 
-pub fn state_machine(inputs: &Data, mut pos: &mut usize, initial: State) -> Vec<Packet> {
+pub fn state_machine(inputs: &Data, mut pos: &mut usize, initial: State) -> Packet {
     let mut state = initial;
     let mut p = Packet::new();
-
-    let mut packets = Vec::<Packet>::new();
 
     while state != State::Finished  {
         match state {
@@ -135,8 +139,7 @@ pub fn state_machine(inputs: &Data, mut pos: &mut usize, initial: State) -> Vec<
                 for i in 1..=n {
                     println!("Recusing for {}/{} n packets at pos {}", i, n, *pos);
                     let ps = state_machine(inputs, &mut pos, Init);
-                    assert_eq!(ps.len(), 1);
-                    p.sub.push(ps[0].clone());
+                    p.sub.push(ps);
                 }
                 state = Finished;
             }
@@ -147,8 +150,7 @@ pub fn state_machine(inputs: &Data, mut pos: &mut usize, initial: State) -> Vec<
                 for i in 1.. {
                     println!("Recusing for {} -- {} len packets at pos {}", i, len, *pos);
                     let ps = state_machine(inputs, &mut pos, Init);
-                    assert_eq!(ps.len(), 1);
-                    p.sub.push(ps[0].clone());
+                    p.sub.push(ps);
                     if *pos == target {
                         break;
                     }
@@ -160,8 +162,7 @@ pub fn state_machine(inputs: &Data, mut pos: &mut usize, initial: State) -> Vec<
             _ => unreachable!(),
         }
     }
-    packets.push(p.clone());
-    packets
+    p
 }
 
 
@@ -170,15 +171,12 @@ pub fn state_machine(inputs: &Data, mut pos: &mut usize, initial: State) -> Vec<
 pub fn part1(inputs: &Data) -> u64 {
     let mut pos = 0;
 
-    let packets = state_machine(inputs, &mut pos, Init);
+    let p = state_machine(inputs, &mut pos, Init);
 
-    for p in &packets {
-        print!("Packet V {} T {} Data {}", p.v, p.t, p.data);
-        print!("{:?}", p.sub)
-    }
+    print!("Packet V {} T {} Data {}", p.v, p.t, p.data);
+    print!("{:?}", p.sub);
 
-    packets[0].version_sum()
-    //69
+    p.version_sum()
 }
 
 #[aoc(day16, part2)]
@@ -186,14 +184,12 @@ pub fn part2(inputs: &Data) -> u64 {
 
     let mut pos = 0;
 
-    let packets = state_machine(inputs, &mut pos, Init);
+    let p = state_machine(inputs, &mut pos, Init);
 
-    for p in &packets {
-        print!("Packet V {} T {} Data {}", p.v, p.t, p.data);
-        print!("{:?}", p.sub)
-    }
+    print!("Packet V {} T {} Data {}", p.v, p.t, p.data);
+    print!("{:?}", p.sub);
 
-    packets[0].eval()
+    p.eval()
 }
 
 
