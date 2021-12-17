@@ -78,6 +78,7 @@ dependencies = [
  "nalgebra",
  "pathfinding",
  "regex",
+ "scan_fmt",
  "statistical",
 ]
 
@@ -1471,6 +1472,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "794821e4ccb0d9f979512f9c1973480123f9bd62a90d74ab0f9426fcf8f4a529"
 dependencies = [
  "bytemuck",
+]
+
+[[package]]
+name = "scan_fmt"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b53b0a5db882a8e2fdaae0a43f7b39e7e9082389e978398bdf223a55b581248"
+dependencies = [
+ "regex",
 ]
 
 [[package]]

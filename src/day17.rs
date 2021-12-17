@@ -1,22 +1,11 @@
 use itertools::Itertools;
-use nalgebra::max;
+use scan_fmt::scan_fmt;
 
 type Data = (i32, i32, i32, i32);
 
 #[aoc_generator(day17)]
 pub fn generator(input: &str) -> Data {
-    let mut s = input.clone();
-    s = s.strip_prefix("target area: x=").unwrap();
-    let (mut xs, mut ys) = s.split_once(", ").unwrap();
-    ys = ys.strip_prefix("y=").unwrap();
-
-    let mut pts = xs
-        .split("..")
-        .chain(ys.split(".."))
-        .map(|p| p.parse::<i32>().unwrap().into())
-        .collect::<Vec<_>>()
-        .into_iter();
-    (pts.next().unwrap(), pts.next().unwrap(), pts.next().unwrap(), pts.next().unwrap())
+    scan_fmt!(input, "target area: x={}..{}, y={}..{}", i32, i32, i32, i32).unwrap()
 }
 
 pub fn check_trajectory(target: &Data, svs: &(i32, i32)) -> Option<i32> {

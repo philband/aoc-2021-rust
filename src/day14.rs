@@ -1,4 +1,3 @@
-use std::collections::{HashMap, VecDeque};
 
 type Data = (Vec<u8>, Vec<([u8;2], usize, usize)>, Vec<u64>);
 type Search = (char, char);

@@ -1,5 +1,3 @@
-use std::collections::{HashMap, VecDeque};
-use itertools::Itertools;
 use crate::day16::State::*;
 
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
