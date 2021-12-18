@@ -30,9 +30,9 @@ pub fn part2_golf1(inputs: &Data) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    //use super::*;
 
-    const SAMPLE: [i32; 10] = [199,200,208,210,200,207,240,269,260,263];
+    const _SAMPLE: [i32; 10] = [199,200,208,210,200,207,240,269,260,263];
 
     #[test]
     pub fn test1() {
