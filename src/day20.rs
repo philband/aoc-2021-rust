@@ -1,8 +1,6 @@
-use std::{iter::Peekable, str::Chars};
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 use itertools::Itertools;
 
-use nalgebra::*;
 
 type Data = (Vec<bool>, BTreeMap<Point, bool>);
 
@@ -78,7 +76,7 @@ pub fn print_map(current: &BTreeMap<Point, bool>) {
     let ymin = current.iter().map(|(Point(x,y), _)| *y).min().unwrap();
     let xmax = current.iter().map(|(Point(x,y), _)| *x).max().unwrap();
     let ymax = current.iter().map(|(Point(x,y), _)| *y).max().unwrap();
-    (ymin-3..=ymax+3).for_each(|(y)| {
+    (ymin-3..=ymax+3).for_each(|y| {
         let s = (xmin-3..=xmax+3).map(|x| {
             match current.get(&Point(x,y)) {
                 Some(true) => '#',

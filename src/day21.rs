@@ -1,5 +1,4 @@
 use std::collections::{HashMap};
-use itertools::Itertools;
 use itertools::iproduct;
 
 const END_SCORE: u8 = 21;
@@ -34,7 +33,7 @@ pub fn part1(inputs: &Data) -> i32 {
     let mut dice = 0;
 
     loop {
-        for (id, mut p) in players.iter_mut().enumerate() {
+        for (id, p) in players.iter_mut().enumerate() {
             p.roll(&mut dice);
             if p.score >= 1000 {
                 break;
@@ -106,7 +105,7 @@ pub fn play_game_naive(cache: &mut Cache, pos1: u8, pos2: u8, score1: u8, score2
 pub fn part2_cache(inputs: &Data) -> u64 {
     let rolls = {
         let map = iproduct!([1,2,3], [1,2,3], [1,2,3]).fold(HashMap::<u8, u64>::new(), |mut acc, (x,y,z)| {
-            *acc.entry((x+y+z)).or_insert(0) += 1;
+            *acc.entry(x+y+z).or_insert(0) += 1;
             acc
         });
         map.iter().map(|(k, v)| (*k, *v)).collect::<Vec<(u8, u64)>>()
