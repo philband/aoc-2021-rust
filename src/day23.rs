@@ -267,7 +267,7 @@ pub fn run_game(input: &Maze) -> (Vec<Maze>, i32) {
         for (d, m) in state.maze.get_moves() {
             let next_cost = state.cost + d;
             // Only add if it is the least costly move to that target
-            let &(_, c) = dist.get(&m.to_int()).unwrap_or(&(HashMap::new(), 1000000));
+            let &(_, c) = dist.get(&m.to_int()).unwrap_or(&(HashMap::new(), i32::MAX));
             if c > next_cost {
                 dist.insert(m.to_int(), (state.maze.clone(), next_cost));
                 q.push(State { cost: next_cost, maze: m });
