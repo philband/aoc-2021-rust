@@ -1,5 +1,5 @@
 use std::cmp::Ordering;
-use std::collections::{BinaryHeap, BTreeMap, HashMap};
+use std::collections::{BTreeMap, BinaryHeap, HashMap};
 
 use itertools::Itertools;
 
@@ -23,7 +23,6 @@ impl std::cmp::PartialOrd for State {
     }
 }
 
-
 type Maze = HashMap<Point, Field>;
 
 #[derive(Debug, Hash, Eq, Ord, PartialOrd, PartialEq, Clone, Copy)]
@@ -45,7 +44,6 @@ impl AmphipodType for Field {
     }
 }
 
-
 impl Point {
     fn manhattan(&self, other: &Self) -> i32 {
         ((self.0 - other.0).abs() + (self.1 - other.1).abs()) as i32
@@ -62,7 +60,7 @@ impl Point {
     fn is_forbidden(&self) -> bool {
         match (self.is_hallway(), self.0) {
             (true, 3 | 5 | 7 | 9) => true,
-            _ => false
+            _ => false,
         }
     }
 }
@@ -89,13 +87,15 @@ impl AmphipodField for Field {
             'B' => 5,
             'C' => 7,
             'D' => 9,
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 }
 
 trait AmphipodGame {
-    fn get_moves(&self) -> Vec<(i32, Self)> where Self: Sized;
+    fn get_moves(&self) -> Vec<(i32, Self)>
+    where
+        Self: Sized;
     fn is_path_x_clear(&self, y: i8, from: i8, to: i8, skip_first: bool) -> bool;
     fn is_path_y_clear(&self, x: i8, from: i8, to: i8, skip_first: bool) -> bool;
     fn is_done(&self) -> bool;
@@ -109,14 +109,15 @@ impl AmphipodGame for Maze {
         let targets: Vec<Point> = self
             .iter()
             .filter(|(p, _)| !p.is_forbidden())
-            .filter_map(|(p, f)| f.is_empty().then(|| *p)).collect();
+            .filter_map(|(p, f)| f.is_empty().then(|| *p))
+            .collect();
 
         // Iterate over everything movable
         self.iter()
             .filter(|(p, f)| f.is_player())
             // collect all possible moves for all movables
             .flat_map(|(from, f)| {
-                let mut possibles: Box<dyn Iterator<Item=&Point>> = Box::new(targets.iter());
+                let mut possibles: Box<dyn Iterator<Item = &Point>> = Box::new(targets.iter());
                 // filter target iterator based on what we are and where we are
                 possibles = match from.is_room() {
                     true => {
@@ -126,48 +127,52 @@ impl AmphipodGame for Maze {
                                 && self.is_path_y_clear(from.0, from.1, 1, true)
                                 && self.is_path_x_clear(1, from.0, to.0, false)
                         }))
-
                     }
                     false => {
                         // for amphipods currently in a hallway only the deepest field (max-y) of the target room is valid
                         let dest_room = f.destination();
                         // find out if there are amphipods of other type in our room
-                        let no_others_in_room = self.iter().filter(|(tp, tf)| {
-                            tp.is_room()
-                                && tp.0 == dest_room
-                                && tf.is_player()
-                                && f != *tf
-                        }).count() == 0;
+                        let no_others_in_room = self
+                            .iter()
+                            .filter(|(tp, tf)| {
+                                tp.is_room() && tp.0 == dest_room && tf.is_player() && f != *tf
+                            })
+                            .count()
+                            == 0;
 
-                        let deepest = self.iter()
+                        let deepest = self
+                            .iter()
                             // only moving to rooms
                             .filter(|(p, _)| p.is_room())
                             // that are "ours" and empty
-                            .filter_map(|(Point(x, y), tf)| (f.destination() == *x && tf.is_empty()).then(|| *y))
+                            .filter_map(|(Point(x, y), tf)| {
+                                (f.destination() == *x && tf.is_empty()).then(|| *y)
+                            })
                             .max();
 
-                        match (no_others_in_room, deepest)
-                        {
-                            (true, Some(depth)) if depth >= 1 => Box::new(possibles.filter(move |to| {
-                                to.is_room()
-                                    && to.0 == dest_room
-                                    && to.1 == depth
-                                    && self.is_path_x_clear(from.1, from.0, dest_room, true)
-                                    && self.is_path_y_clear(dest_room, from.1, to.1, false)
-                            })),
-                            _ => Box::new(possibles.filter(|_| false))
+                        match (no_others_in_room, deepest) {
+                            (true, Some(depth)) if depth >= 1 => {
+                                Box::new(possibles.filter(move |to| {
+                                    to.is_room()
+                                        && to.0 == dest_room
+                                        && to.1 == depth
+                                        && self.is_path_x_clear(from.1, from.0, dest_room, true)
+                                        && self.is_path_y_clear(dest_room, from.1, to.1, false)
+                                }))
+                            }
+                            _ => Box::new(possibles.filter(|_| false)),
                         }
                     }
                 };
 
-                possibles
-                    .map(|t| {
-                        let mut maze = self.clone();
-                        maze.insert(*from, '.');
-                        maze.insert(*t, *f);
-                        (from.manhattan(t) * f.cost(), maze)
-                    })
-            }).collect()
+                possibles.map(|t| {
+                    let mut maze = self.clone();
+                    maze.insert(*from, '.');
+                    maze.insert(*t, *f);
+                    (from.manhattan(t) * f.cost(), maze)
+                })
+            })
+            .collect()
     }
 
     #[inline]
@@ -202,27 +207,25 @@ impl AmphipodGame for Maze {
         true
     }
 
-
     fn is_done(&self) -> bool {
-        self
-            .iter()
+        self.iter()
             .filter(|(p, f)| f.is_player())
             .all(|(p, f)| f.destination() == p.0 && p.is_room())
     }
 
     fn to_int(&self) -> u128 {
-        self
-            .iter()
+        self.iter()
             .sorted_by_key(|&(a, _)| a)
             .fold(0, |acc, (_, f)| {
-                (acc << 3) + match &f {
-                    'A' => 1,
-                    'B' => 2,
-                    'C' => 3,
-                    'D' => 4,
-                    '.' => 5,
-                    _ => unreachable!()
-                }
+                (acc << 3)
+                    + match &f {
+                        'A' => 1,
+                        'B' => 2,
+                        'C' => 3,
+                        'D' => 4,
+                        '.' => 5,
+                        _ => unreachable!(),
+                    }
             })
     }
 
@@ -242,11 +245,13 @@ impl AmphipodGame for Maze {
     }
 }
 
-
 pub fn run_game(input: &Maze) -> (Vec<Maze>, i32) {
     let mut dist = HashMap::<u128, (Maze, i32)>::new();
-    let mut q = BinaryHeap::new();
-    q.push(State { cost: 0, maze: input.clone() });
+    let mut q = BinaryHeap::with_capacity(128);
+    q.push(State {
+        cost: 0,
+        maze: input.clone(),
+    });
 
     // Iterate over queue
     while let Some(state) = q.pop() {
@@ -270,14 +275,15 @@ pub fn run_game(input: &Maze) -> (Vec<Maze>, i32) {
             let &(_, c) = dist.get(&m.to_int()).unwrap_or(&(HashMap::new(), i32::MAX));
             if c > next_cost {
                 dist.insert(m.to_int(), (state.maze.clone(), next_cost));
-                q.push(State { cost: next_cost, maze: m });
+                q.push(State {
+                    cost: next_cost,
+                    maze: m,
+                });
             }
         }
     }
     (Vec::new(), 69)
 }
-
-
 
 pub fn extend(inputs: &Maze) -> Maze {
     let mut maze = Maze::new();
@@ -286,7 +292,7 @@ pub fn extend(inputs: &Maze) -> Maze {
             1 => Point(x, y),
             2 => Point(x, y),
             3 => Point(x, y + 2),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
         maze.insert(np, *f);
     });
@@ -309,20 +315,22 @@ pub fn extend(inputs: &Maze) -> Maze {
 
 #[aoc_generator(day23)]
 pub fn generator(input: &str) -> Maze {
-    input.lines().enumerate().fold(HashMap::<Point, char>::new(), |mut acc, (y, l)| {
-        l.chars().enumerate().for_each(|(x, c)| {
-            let data = match c {
-                '#' | ' ' => None,
-                x => Some(x),
-            };
-            if let Some(field) = data {
-                acc.insert(Point(x as i8, y as i8), field);
-            }
-        });
-        acc
-    })
+    input
+        .lines()
+        .enumerate()
+        .fold(HashMap::<Point, char>::new(), |mut acc, (y, l)| {
+            l.chars().enumerate().for_each(|(x, c)| {
+                let data = match c {
+                    '#' | ' ' => None,
+                    x => Some(x),
+                };
+                if let Some(field) = data {
+                    acc.insert(Point(x as i8, y as i8), field);
+                }
+            });
+            acc
+        })
 }
-
 
 #[aoc(day23, part1)]
 pub fn part1(inputs: &Maze) -> i32 {
@@ -344,28 +352,31 @@ pub fn part2(inputs: &Maze) -> i32 {
     cost
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     pub fn test1() {
-        let input = generator("#############
+        let input = generator(
+            "#############
 #...........#
 ###B#C#B#D###
   #A#D#C#A#
-  #########");
+  #########",
+        );
         assert_eq!(part1(&input), 12521);
     }
 
     #[test]
     pub fn test2() {
-        let input = generator("#############
+        let input = generator(
+            "#############
 #...........#
 ###B#C#B#D###
   #A#D#C#A#
-  #########");
+  #########",
+        );
         assert_eq!(part2(&input), 44169);
     }
 }
